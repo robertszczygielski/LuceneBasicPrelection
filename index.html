@@ -1,0 +1,333 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/blood.css" id="theme">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<section><h2>Apache Lucene - czyli ta, która uratowała Sprint.</h2></section>
+					<section><h2>Robert Szczygielski</h2></section>
+				</section>
+
+				<section>
+					<ul>
+					Agenda:
+						<li>Przypadek biznesowy</li>
+						<li>Podstawowy Lucene</li>
+						<ul>
+							<li>Przygotowanie</li>
+							<li>Zapis</li>
+							<li>Odczyt</li>
+							<li>Wyszukiwanie</li>
+						</ul>
+						<li>Kod / Demo</li>
+						<li>End</li>
+						<p class="fragment">~45 minut</p>
+					</ul>
+
+				</section>
+
+				<section>
+					<section><h2>Przypadek biznesowy</h2></section>
+					<section>
+					 	<h2>Domena</h2>
+						<p class="fragment">Hodowla kotów rasowych, prowadzona od 3 pokoleń</p>
+						<p class="fragment">Senior rodu "pamięta stare dobre czasy"</p>
+					</section>
+				</section>
+				<section>
+					<section><h2>User Sroty</h2></section>
+					<section>
+						<h2>Już sprzedane</h2>
+						<p>Informacje o sprzedanych kotach są zbędne</p>
+						<p class="fragment">Zdjęcia, certyfikaty, szczepienia, inne skany dokumentów</p>
+					</section>
+					<section>
+						<h2>Wyszukiwanie</h2>
+						<p>Chcę wyszukać już sprzedanego kota</p>
+						<p class="fragment">Najlepiej po imieniu albo poprzez zakres dat sprzedarzy</p>
+					</section>
+					<section>
+						<h2>Miejsce archiwizacji</h2>
+						<p>USB Stick</p>
+						<p class="fragment">Mamy w magazynie parę pendrive`ów</p>
+						<p class="fragment">Nietypowa architektura sieci</p>
+					</section>
+					<section>
+						<img class="r-stretch" src="./img/arch.png">
+					</section>
+				</section>
+
+				<section>
+					<h2>Podstawy Lucene</h2>
+				</section>
+				
+				<section>
+					<section><h2>Przygotowanie</h2></section>
+					<section>
+						<h5>Miejsce przechowywania indexu</h5>
+						<ul><span style="color:#66ff66">Lucene &lt; 7.5</span></ul>
+							<li>ByteBufferDirectory</li>
+							<li>RAMDirectory</li>
+							<li>FSDirectory</li>
+							<ul><span style="color:#66ff66">Lucene &gt; 7.5</span></ul>
+							<li>RAMDirectory = @Deprecated</li>
+					</section>
+					<section>
+						<pre><code data-trim data-noescape>
+							Directory d = new FSDirectory.open(path);
+						</code></pre>
+						<pre class="fragment"><code data-trim data-noescape>
+							Directory d = new MMapDirectory(path)
+						</code></pre>
+					</section>
+					<section data-auto-animate>
+						<ul>FSDirectory
+							<li>MMapDirectory</li>
+							<li>SimpleFSDirectory</li>
+							<li>NIOFSDirectory</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<ul>FSDirectory
+							<li><span style="color:#33cc33">MMapDirectory</li>
+							<ul>
+								<li>Preferowana</li>
+								<li>Memory-mapped IO</li>
+							</ul>
+							<li>SimpleFSDirectiory</li>
+							<ul>
+								<li>Brak optymalizacji wielowątkowej</li>
+							</ul>
+							<li>NIOFSDirectory</li>
+							<ul>
+								<li>wykorzystuje java.nio</li>
+								<li>Windows Sun Jar Bug</li>
+							</ul>
+						</ul>
+					</section>
+					<section>
+						<h2>Standaryzacja tekstów</h2>
+					</section>
+					<section data-auto-animate>
+						<h5>Standaryzacja tekstu</h5>
+						<ul class="fragment"><pre><code>Analyzer</code></pre>
+							<li class="fragment">usuwa niepotrzebne znaki</li>
+							<li class="fragment">usuwa niepotrzebne wyrazy</li>
+							<li class="fragment">uwspólnia wyrazy</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h5>Standaryzacja tekstu</h5>
+						<ul><pre><code>Analyzer</code></pre>
+							<li>usuwa niepotrzebne znaki</li>
+							<ul>
+								<li>,;/\</li>
+								<li>inne znki stopujące</li>
+							</ul>
+							<li>usuwa niepotrzebna wyrazy</li>
+							<ul>
+								<li>mgr</li>
+								<li>zaimki, przyimki, spójniki, ...</li>
+							</ul>
+							<li>uwspólnia wyrazy</li>
+							<ul>
+								<li>RAM</li>
+								<li>Rams</li>
+								<li class="fragment highlight-green">ram</li>
+							</ul>
+						</ul>
+					</section>
+					<section>
+						<ul>
+							<li class="fragment highlight-green">StandardAnalyzer</li>
+							<li>PolishAnalyzer</li>
+							<li>...</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Przygotowanie</h2>
+						<h2>encji</h2>
+					</section>
+					<section data-auto-animate>
+						<h2>Przygotowanie</h2>
+						<h2><del>encji</del></h2>
+						<h2>Document</h2>
+					</section>
+					<section>
+						<h3>Pola</h3>
+						<ul>
+							<li class="fragment highlight-green" data-fragment-index="1">TextField</li>
+							<li class="fragment highlight-green" data-ftagment-index="1">SortedDocValuesField</li>
+							<li>SortedField</li>
+							<li>StringField</li>
+							<li>SortedSetDocValuesField</li>
+							<li>NumericDocValuesField</li>
+							<li>SortedNumericDocValuesField</li>
+							<li>IntPoint</li>
+							<li>LongPoint</li>
+							<li>FloatPoint</li>
+							<li>DoublePoint</li>
+						</ul>
+					</section>
+					<section>
+						<pre><code>Field tf = new TextField("name", dto.getName(), Store.YES);</code></pre>
+					</section>
+					<section data-auto-animate><pre><code data-line-numbers="2">Field tf = new TextField(
+"name",
+dto.getName(),
+Store.YES
+);
+						</code></pre>
+					</section>
+					<section data-auto-animate><pre><code data-line-numbers="3">Field tf = new TextField(
+"name",
+dto.getName(),
+Store.YES
+);
+						</code></pre>
+					</section>
+					<section data-auto-animate><pre><code data-line-numbers="4">Field tf = new TextField(
+"name",
+dto.getName(),
+Store.YES
+);
+						</code></pre>
+					</section>
+					<section>
+						<table>
+							<tr>
+								<th>co?</th>
+								<th>Store</th>
+								<th>wyszukiwanie</th>
+								<th>wartość</th>
+							</tr>
+							<tr>
+								<td>jakiś tekst</td>
+								<td>YES</td>
+								<td>tak</td>
+								<td>jakiś tekst</td>
+							</tr>
+							<tr>
+								<td>jakiś tekst</td>
+								<td>NO</td>
+								<td>tak</td>
+								<td>null</td>
+							</tr>
+						</table>
+					</section>
+					<section data-auto-animate>
+						<pre><code data-line-numbers="1-4">Field f = new SortedDocValuesField(
+"data sprzedaży",
+new BytesRef(dto.date.toString())
+);
+						</code></pre>
+					</section>
+					<section data-auto-animate>
+						<pre><code data-line-numbers="2">Field f = new SortedDocValuesField(
+"data sprzedaży",
+new BytesRef(dto.date.toString())
+);
+						</code></pre>
+					</section>
+					<section data-auto-animate>
+						<pre><code data-line-numbers="3">Field f = new SortedDocValuesField(
+"data sprzedaży",
+new BytesRef(dto.date.toString())
+);
+						</code></pre>
+					</section>
+					<section>
+						<h2>Zapis</h2>
+					</section>
+					<section>
+						<h3>Przygotowanie - konfiguracja</h3>
+						<pre class="fragment" data-fragment-index="1"><code>analyzer = new PolishAnalyzer();</code></pre>
+						<pre><code>IndexWriterConfig iwc = new IndexWriterConfig(analyzer);</code></pre>
+					</section>
+					<section>
+						<h3>Przygotowanie - otwarcie pisarza</h3>
+						<pre class="fragment" data-fragment-index="1"><code>
+Directory dir = new RAMDirectory();
+IndexWriterConfig iwc = new IndexWriterConfig(analyzer);</code></pre>
+						<pre><code>IndexWriter writer = new IndexWriter(dir, iwc);</code></pre>
+					</section>
+					<section>
+						<h3>Właściwy zapis</h3>
+						<pre class="fragment" data-fragment-index="1"><code>
+public void save(Document document) {
+...
+						</code></pre>	
+						<pre><code>writer.addDocument(document);</code></pre>
+
+						<pre class="fragment" data-fragment-index="1"><code>
+...
+}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Zamknięcie pisarza</h3>
+						<pre><code>writer.close();</pre></code>
+					</section>
+
+				</section>
+				<section>
+					<section>
+						<h3>Odczyt</h3>
+					</section>
+					<section>
+						<pre class="fragment" data-fragment-index="1"><code>Analyzer analyzer = new PolischAnalyzer();</code></pre>
+						<pre><code>Query q = new QueryParser("name", analyzer).parse("Ola");</code></pre>
+						<pre class="fragment" data-fragment-index="2"><code>Query q = new MatchAllDocsQuery();</code></pre>
+					</section>
+					<section>
+						<pre class="fragment" data-fragment-index="1"><code>Directory dir = new RAMDirectory();</code></pre>
+						<pre><code>IndexReader reader = DirectoryReader.open(dir);</code></pre>
+						<pre class="fragment" data-fragment-index="2"><code>IndexSearcher searcher = new IndexSercher(reader);</code></pre>
+					</section>
+					<section>
+						<pre><code>TopDocs docs = searcher.search(q, intMaxBath);</code></pre>
+						<pre class="fragment"><code>ScoreDoc[] hits = docs.scoreDocs;</code></pre> 
+					</section>
+					<section>
+						<pre><code>for(ScoreDoc hit : hits) {
+	int docId = hit.doc;
+	Document d = searcher.doc(docId);
+	someArray.add(d.get("name");
+}</code></pre>
+					</section>
+
+				</section>
+
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
