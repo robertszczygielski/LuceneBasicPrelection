@@ -114,7 +114,7 @@
 							<li>NIOFSDirectory</li>
 							<ul>
 								<li>wykorzystuje java.nio</li>
-								<li>Windows Sun Jar Bug</li>
+								<li>Windows Sun JAR Bug</li>
 							</ul>
 						</ul>
 					</section>
@@ -157,6 +157,8 @@
 							<li>...</li>
 						</ul>
 					</section>
+        </section>
+        <section>
 					<section data-auto-animate>
 						<h2>Przygotowanie</h2>
 						<h2>encji</h2>
@@ -183,27 +185,11 @@
 						</ul>
 					</section>
 					<section>
-						<pre><code>Field tf = new TextField("name", dto.getName(), Store.YES);</code></pre>
-					</section>
-					<section data-auto-animate><pre><code data-line-numbers="2">Field tf = new TextField(
-"name",
-dto.getName(),
-Store.YES
-);
-						</code></pre>
-					</section>
-					<section data-auto-animate><pre><code data-line-numbers="3">Field tf = new TextField(
-"name",
-dto.getName(),
-Store.YES
-);
-						</code></pre>
-					</section>
-					<section data-auto-animate><pre><code data-line-numbers="4">Field tf = new TextField(
-"name",
-dto.getName(),
-Store.YES
-);
+            <pre><code data-trim data-noescape data-line-numbers="1-4|2|3|4">
+              Field tf = new TextField(
+                "name",
+                dto.getName(),
+                Store.YES);
 						</code></pre>
 					</section>
 					<section>
@@ -229,24 +215,10 @@ Store.YES
 						</table>
 					</section>
 					<section data-auto-animate>
-						<pre><code data-line-numbers="1-4">Field f = new SortedDocValuesField(
-"data sprzedaży",
-new BytesRef(dto.date.toString())
-);
-						</code></pre>
-					</section>
-					<section data-auto-animate>
-						<pre><code data-line-numbers="2">Field f = new SortedDocValuesField(
-"data sprzedaży",
-new BytesRef(dto.date.toString())
-);
-						</code></pre>
-					</section>
-					<section data-auto-animate>
-						<pre><code data-line-numbers="3">Field f = new SortedDocValuesField(
-"data sprzedaży",
-new BytesRef(dto.date.toString())
-);
+						<pre><code data-trim data-noescape data-line-numbers="1-3|2|3">
+              Field f = new SortedDocValuesField(
+               "data sprzedaży",
+                new BytesRef(dto.date.toString()));
 						</code></pre>
 					</section>
 					<section>
@@ -254,62 +226,155 @@ new BytesRef(dto.date.toString())
 					</section>
 					<section>
 						<h3>Przygotowanie - konfiguracja</h3>
-						<pre class="fragment" data-fragment-index="1"><code>analyzer = new PolishAnalyzer();</code></pre>
-						<pre><code>IndexWriterConfig iwc = new IndexWriterConfig(analyzer);</code></pre>
+						<pre class="fragment" data-fragment-index="1"><code data-trim data-noescape>
+              Analyzer analyzer = new PolishAnalyzer();
+            </code></pre>
+						<pre><code data-trim data-noescape>
+              IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
+            </code></pre>
 					</section>
 					<section>
 						<h3>Przygotowanie - otwarcie pisarza</h3>
-						<pre class="fragment" data-fragment-index="1"><code>
-Directory dir = new RAMDirectory();
-IndexWriterConfig iwc = new IndexWriterConfig(analyzer);</code></pre>
-						<pre><code>IndexWriter writer = new IndexWriter(dir, iwc);</code></pre>
+						<pre class="fragment" data-fragment-index="1"><code data-trim data-noescape>
+              Directory dir = new RAMDirectory();
+              IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
+            </code></pre>
+						<pre><code data-trim data-noescape>
+              IndexWriter writer = new IndexWriter(dir, iwc);
+            </code></pre>
 					</section>
 					<section>
 						<h3>Właściwy zapis</h3>
-						<pre class="fragment" data-fragment-index="1"><code>
-public void save(Document document) {
-...
+						<pre class="fragment" data-fragment-index="1"><code data-trim data-noescape>
+              public void save(Document document) {
+              ...
 						</code></pre>	
-						<pre><code>writer.addDocument(document);</code></pre>
-
-						<pre class="fragment" data-fragment-index="1"><code>
-...
-}
+						<pre><code data-trim data-noescape>
+              writer.addDocument(document);
+            </code></pre>
+            <pre class="fragment" data-fragment-index="2"><code data-trim data-noescape>
+              writer.close();
+            </code></pre>
+						<pre class="fragment" data-fragment-index="1"><code data-trim data-noescape>
+              ...
+              }
 						</code></pre>
-					</section>
-					<section>
-						<h3>Zamknięcie pisarza</h3>
-						<pre><code>writer.close();</pre></code>
-					</section>
-
-				</section>
+          </section>
+        </section>
 				<section>
 					<section>
-						<h3>Odczyt</h3>
+						<h2>Odczyt</h2>
 					</section>
 					<section>
-						<pre class="fragment" data-fragment-index="1"><code>Analyzer analyzer = new PolischAnalyzer();</code></pre>
-						<pre><code>Query q = new QueryParser("name", analyzer).parse("Ola");</code></pre>
-						<pre class="fragment" data-fragment-index="2"><code>Query q = new MatchAllDocsQuery();</code></pre>
+						<pre class="fragment" data-fragment-index="1"><code data-trim data-noescape>
+              Analyzer analyzer = new PolischAnalyzer();
+            </code></pre>
+            <pre><code data-trim data-noescape>
+              Query q = new QueryParser("name", analyzer).parse("Ola");
+            </code></pre>
+						<pre class="fragment" data-fragment-index="2"><code data-trim data-noescape>
+              Query q = new MatchAllDocsQuery();
+            </code></pre>
 					</section>
 					<section>
-						<pre class="fragment" data-fragment-index="1"><code>Directory dir = new RAMDirectory();</code></pre>
-						<pre><code>IndexReader reader = DirectoryReader.open(dir);</code></pre>
-						<pre class="fragment" data-fragment-index="2"><code>IndexSearcher searcher = new IndexSercher(reader);</code></pre>
+						<pre class="fragment" data-fragment-index="1"><code data-trim data-noescape>
+              Directory dir = new RAMDirectory();
+            </code></pre>
+						<pre><code data-trim data-noescape>
+              IndexReader reader = DirectoryReader.open(dir);
+            </code></pre>
+						<pre class="fragment" data-fragment-index="2"><code data-trim data-noescape>
+              IndexSearcher searcher = new IndexSercher(reader);
+            </code></pre>
 					</section>
 					<section>
-						<pre><code>TopDocs docs = searcher.search(q, intMaxBath);</code></pre>
-						<pre class="fragment"><code>ScoreDoc[] hits = docs.scoreDocs;</code></pre> 
+						<pre><code data-trim data-noescape>
+              TopDocs docs = searcher.search(q, intMaxBath);
+            </code></pre>
+						<pre class="fragment"><code data-trim data-noescape>
+              ScoreDoc[] hits = docs.scoreDocs;
+            </code></pre> 
 					</section>
 					<section>
-						<pre><code>for(ScoreDoc hit : hits) {
-	int docId = hit.doc;
-	Document d = searcher.doc(docId);
-	someArray.add(d.get("name");
-}</code></pre>
+						<pre><code data-trim data-noescape data-line-numbers="1-5|2|3|4">
+              for(ScoreDoc hit : hits) {
+                int docId = hit.doc;
+                Document d = searcher.doc(docId);
+                someList.add(d.get("name");
+              }
+            </code></pre>
 					</section>
-
 				</section>
+        <section>
+          <section>
+           <h2>Wyszukiwanie</h2>
+          </section>
+          <section data-auto-animate>
+            <pre><code data-trim data-noescape>
+              Query q = new QueryParser("name", analyzer).parse("Ola");
+            </code></pre>
+            <pre class="fragment"><code data-trim data-noescape>
+              Query q = new WildcardQuery(
+                new Term("name", "*" + subString + "*"));
+            </code></pre>
+          </section>
+          <section data-auto-animate>
+            <pre><code data-trim data-noescape>
+              Query q = new WildcardQuery(
+                new Term("name", "*" + subString + "*"));
+            </code></pre>
+            <pre><code data-trim data-noescape>
+              TopDocs docs = searcher.search(q, maxAmountInBath);
+            </code></pre>
+          </section>
+          <section>
+            <ul>Wyszukiwanie po: 
+              <li>fragmęcie tekstu</li>
+              <li>zakresie dat</li>
+            </ul>
+          </section>
+          <section>
+            <pre><code data-trim data-noescape>
+              Query q = new WildcardQuery(
+                new Term("name", "*" + subString + "*"));
+            </code></pre>
+            <pre class="fragment"><code data-trim data-noescape>
+            Query q2 = new TermRangeQuery(
+              "data sprzedarzy",
+              new BytesRef(from),
+              new BytesRef(to),
+              includeLower,
+              includeUpper);
+            </code></pre>
+          </section>
+          <section>
+            <pre><code data-trim data-noescape data-line-numbers="1-3|2,3">
+              BooleanQuery.Builder bq = new BooleanQuery.Builder();
+              bq.add(q, BooleanClause.Occur.MUST);
+              bq.add(q1, BooleanClause.Occur.MUST);
+            </code></pre>
+          </section>
+          <section>
+            <pre><code data-trim data-noescape>
+              TopDocs docs = searcher.search(
+                builder.build(),
+                maxAmountInBath);
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>Usuwanie</h2>
+          </section>
+          <section>
+            <pre><code data-trim data-noescape>
+              IndexWriter writer = new IndexWriter(dir, iwc);
+              Term term = new Term("name", "Ola");
+              writer.deleteDocument(term);
+              writer.close();
+            </code></pre>
+          </section>
+        </section>
 
 			</div>
 		</div>
