@@ -76,6 +76,15 @@
 				
 				<section>
 					<section><h2>Przygotowanie</h2></section>
+          <section>
+            <h2>Zależności</h2>
+          </section>
+          <section>
+            <pre><code data-trim data-noescape>
+              org.apache.lucene:lucene-core:8.6
+              ore.apache.lucene:lucene-queryparser:8.6
+            </code></pre>
+          </section>
 					<section>
 						<h5>Miejsce przechowywania indexu</h5>
 						<ul><span style="color:#66ff66">Lucene &lt; 7.5</span></ul>
@@ -88,9 +97,6 @@
 					<section>
 						<pre><code data-trim data-noescape>
 							Directory d = new FSDirectory.open(path);
-						</code></pre>
-						<pre class="fragment"><code data-trim data-noescape>
-							Directory d = new MMapDirectory(path)
 						</code></pre>
 					</section>
 					<section data-auto-animate>
@@ -123,7 +129,7 @@
 					</section>
 					<section data-auto-animate>
 						<h5>Standaryzacja tekstu</h5>
-						<ul class="fragment"><pre><code>Analyzer</code></pre>
+						<ul><pre><code>Analyzer</code></pre>
 							<li class="fragment">usuwa niepotrzebne znaki</li>
 							<li class="fragment">usuwa niepotrzebne wyrazy</li>
 							<li class="fragment">uwspólnia wyrazy</li>
@@ -234,7 +240,7 @@
             </code></pre>
 					</section>
 					<section>
-						<h3>Przygotowanie - otwarcie pisarza</h3>
+						<h3>Przygotowanie - writer</h3>
 						<pre class="fragment" data-fragment-index="1"><code data-trim data-noescape>
               Directory dir = new RAMDirectory();
               IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
@@ -266,6 +272,7 @@
 						<h2>Odczyt</h2>
 					</section>
 					<section>
+            <h3>Zapytanie</h3>
 						<pre class="fragment" data-fragment-index="1"><code data-trim data-noescape>
               Analyzer analyzer = new PolischAnalyzer();
             </code></pre>
@@ -276,7 +283,8 @@
               Query q = new MatchAllDocsQuery();
             </code></pre>
 					</section>
-					<section>
+          <section>
+            <h3>Odczyt</h3>
 						<pre class="fragment" data-fragment-index="1"><code data-trim data-noescape>
               Directory dir = new RAMDirectory();
             </code></pre>
@@ -304,12 +312,19 @@
               }
             </code></pre>
 					</section>
+          <section>
+            <h3>Zamykamy</3>
+              <pre><code data-trim data-noescape>
+                reader.close();
+              </code></pre>
+          </section>
 				</section>
         <section>
           <section>
            <h2>Wyszukiwanie</h2>
           </section>
           <section data-auto-animate>
+            <h3>Zapytanie</h3>
             <pre><code data-trim data-noescape>
               Query q = new QueryParser("name", analyzer).parse("Ola");
             </code></pre>
@@ -319,6 +334,7 @@
             </code></pre>
           </section>
           <section data-auto-animate>
+            <h3>Zapytanie</h3>
             <pre><code data-trim data-noescape>
               Query q = new WildcardQuery(
                 new Term("name", "*" + subString + "*"));
@@ -334,11 +350,12 @@
             </ul>
           </section>
           <section>
+            <h3>Zapytanie</h3>
             <pre><code data-trim data-noescape>
               Query q = new WildcardQuery(
                 new Term("name", "*" + subString + "*"));
             </code></pre>
-            <pre class="fragment"><code data-trim data-noescape>
+            <pre class="fragment"><code data-trim data-noescape data-line-numbers="1-6|2|3-4|5-6">
             Query q2 = new TermRangeQuery(
               "data sprzedarzy",
               new BytesRef(from),
