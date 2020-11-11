@@ -1,8 +1,8 @@
 Prelection abaut basic use of Apche Lucene, in Polish, it discribed:
- * Document class
+ # Document class
   - TextField
   - SortedDocValuesField
- * how to:
+ # how to:
   - read
   - write
   - search
