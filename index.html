@@ -65,9 +65,32 @@
 						<p class="fragment">Mamy w magazynie parę pendrive`ów</p>
 						<p class="fragment">Nietypowa architektura sieci</p>
 					</section>
+          <section>
+            <h2>Wielkość danych</h2>
+            <p>1-2GB / kot</p>
+            <p>40-120 GB / pendrive</p> 
+          </section>
 					<section>
 						<img class="r-stretch" src="./img/arch.png">
 					</section>
+          <section>
+            <h2>Propozycje</h2>
+            <ul>
+              <li>Piszemy "COŚ" swojego
+                <ul>
+                  <li>pliki json/xml</li>
+                  <li>indexsowanie w bazie danych</li> 
+                </ul>
+              </li>
+              <li>Coś gotowego
+                <ul>
+                  <li>Baza NoSQL</li>
+                  <li>Baza plikowa SQLite</li>
+                  <li>Lucene</li>
+                </ul>
+              </li>
+            </ul>
+          </section>
 				</section>
 
 				<section>
@@ -372,8 +395,30 @@
           <section>
             <pre><code data-trim data-noescape>
               TopDocs docs = searcher.search(
-                builder.build(),
+                bq.build(),
                 maxAmountInBath);
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>Sortowanie</h2>
+          </section>
+          <section>
+            <pre><code data-trim data-noescape>
+              boolean reverse = false;
+              Sort sort = new Sort(
+                new SortedSetSortField("name", reverse)
+              );
+            </code></pre>
+          </section>
+          <section>
+            <pre><code data-trim data-noescape data-line-numbers="4">
+              TopDocs docs = searcher.search(
+                bq.build(),
+                maxAmountInBatch,
+                sort
+              );
             </code></pre>
           </section>
         </section>
@@ -388,6 +433,14 @@
               writer.deleteDocument(term);
               writer.close();
             </code></pre>
+          </section>
+          </section>
+        <section>
+          <section>
+           <h1>demo</h1>
+          </section>
+          <section>
+            <h1>Q&A</h1>
           </section>
         </section>
 
